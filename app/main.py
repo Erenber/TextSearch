@@ -1,31 +1,17 @@
 from fastapi import FastAPI
-from datetime import datetime
+from fastapi.responses import FileResponse
 
-
-def get_date():
-    time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    return tuple(time.split())
-
+from app.routers.search import search_router
+from app.routers.add import add_router
+from app.routers.delete import delete_router
 
 app = FastAPI()
-documents = [
-    {"id": 1, "rubricks": "Ne znaiu shto eto...", "text": "Artik is cool", "created_data": get_date()},
-    {"id": 2, "rubricks": "Ne znaiu shto eto...", "text": "EEEEE", "created_data": get_date()},
-    {"id": 3, "rubricks": "Ne znaiu shto eto...", "text": "Dima bro", "created_data": get_date()},
-    {"id": 4, "rubricks": "Ne znaiu shto eto...", "text": "Modsen modsen", "created_data": get_date()},
-]
 
-
-@app.get("/documents/{text}")
-def search(text):
-    return [doc for doc in documents if text in doc["text"]]
+app.include_router(search_router)
+app.include_router(add_router)
+app.include_router(delete_router)
 
 
 @app.get("/")
-def main_page():
-    return 'Main page. .documents to look through the documents. documents/... to look through the documents containing...    '
-
-
-@app.get("/documents")
-def get_documents():
-    return documents
+async def root():
+    return FileResponse("app/templates/app/main.html")
