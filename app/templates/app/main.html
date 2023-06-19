@@ -1,10 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>TEXT SEARCHER</title>
+    <meta charset="utf-8"/>
+    <style>
+        #results {
+            float: right;
+            width: 50%;
+            margin-right: 20px;
+        }
+    </style>
 </head>
 <body>
+<div id="results"></div>
+<p>
+    Введите рубрику: <br/>
+    <textarea name="input_rubrics" id="input_rubrics" cols="40"></textarea>
+</p>
+<p>
+    Введите текст: <br/>
+    <textarea name="input_text" id="input_text" cols="40" rows="3"></textarea>
+</p>
+<button onclick="send()">Отправить</button>
+<p>
+    Введите текст документа: <br/>
+    <textarea name="input_search" id="input_search" cols="40"></textarea>
+</p>
+<button onclick="search('Найти')">Найти</button>
+<button onclick="search('Все документы')">Все документы</button>
+<p>
+    Введите id документа для удаления: <br/>
+    <textarea name="input_delete" id="input_delete" cols="40"></textarea>
+</p>
+<button onclick="del('Удалить')">Удалить по Id</button>
+<button onclick="del('Удалить все документы')">Удалить все документы</button>
+<script>
+    async function send() {
+        const input_text = document.getElementById("input_text").value;
+        const input_rubrics = document.getElementById("input_rubrics").value;
 
+        const response = await fetch("/add", {
+            method: "POST",
+            headers: {"Accept": "application/json", "Content-Type": "application/json"},
+            body: JSON.stringify({
+                doc_text: input_text,
+                rubrics: input_rubrics
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById("results").textContent = data.results;
+        } else {
+            console.log(response);
+        }
+    }
+
+    async function search(name) {
+        var url = "/search/all";
+
+        if (name === 'Найти') {
+            const input_text = document.getElementById("input_search").value;
+            url = `/search/${encodeURIComponent(input_text)}`;
+        }
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {"Accept": "application/json"}
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const resultsElement = document.getElementById("results");
+
+            resultsElement.innerHTML = "";
+
+            if (data.length === 0) {
+                const noDataElement = document.createElement("p");
+                noDataElement.textContent = "Документы отсутствуют";
+                resultsElement.appendChild(noDataElement);
+            } else {
+                data.forEach((doc) => {
+                    const docElement = document.createElement("div");
+                    docElement.innerHTML =
+                    `<p style="line-height: 0.7;">ID: ${doc.id}</p>
+                    <p style="line-height: 0.7;">Rubrics: ${doc.rubrics}</p>
+                    <p style="line-height: 0.7;">Doc Text: ${doc.doc_text}</p>
+                    <p style="line-height: 0.7;">Created Date: ${doc.created_date}</p><br><br>`;
+                    resultsElement.appendChild(docElement);
+                });
+            }
+        } else {
+            console.log(response);
+        }
+    }
+
+    async function del(name) {
+        var url = "/delete/";
+        var input_id = -1
+        if (name === 'Удалить') {
+            input_id = document.getElementById("input_delete").value;
+        }
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {"Accept": "application/json", "Content-Type": "application/json"},
+            body: JSON.stringify({
+                id: input_id
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const resultsElement = document.getElementById("results");
+
+            resultsElement.innerHTML = "";
+
+            const countElement = document.createElement("p");
+            countElement.textContent = `Количество удаленных записей: ${data}`;
+            resultsElement.appendChild(countElement);
+
+        } else {
+            console.log(response);
+        }
+    }
+</script>
 </body>
 </html>
