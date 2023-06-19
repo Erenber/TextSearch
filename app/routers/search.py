@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-#from DB_connection import session
 from app.setup.DB_connection import session
 from app.models.models import Docs
 
