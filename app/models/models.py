@@ -3,12 +3,12 @@ import datetime
 from sqlalchemy import Column
 from sqlalchemy import Integer, String, Text, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PyDoc(BaseModel):
-    rubrics: str
-    doc_text: str
+    rubrics: str = Field(min_length=1, max_length=45)
+    doc_text: str = Field(min_length=1)
 
 
 Base = declarative_base()

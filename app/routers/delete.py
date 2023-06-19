@@ -7,7 +7,7 @@ delete_router = APIRouter(prefix="/delete", tags=['Deleting documents'])
 
 
 @delete_router.delete("/")
-def delete_by_id(data=Body()):
+async def delete_by_id(data=Body()):
     delete_id = int(data["id"])
     if delete_id == -1:
         result = session.query(Docs).delete()

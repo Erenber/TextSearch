@@ -13,5 +13,5 @@ app.include_router(delete_router)
 
 
 @app.get("/")
-def root():
+async def root():
     return FileResponse("app/templates/app/main.html")

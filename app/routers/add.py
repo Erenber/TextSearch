@@ -8,9 +8,7 @@ add_router = APIRouter(prefix="/add", tags=['Document addition'])
 
 
 @add_router.post("/")
-def add_document(py_doc: PyDoc):
-    # if data["rubrics"] == "" or data["doc_text"] == "":
-    #     return {"message": f"Error: Null parameter"}
+async def add_document(py_doc: PyDoc):
     doc = Docs(py_doc)
     session.add(doc)
     session.commit()

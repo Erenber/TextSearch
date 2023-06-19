@@ -52,7 +52,8 @@
             const data = await response.json();
             document.getElementById("results").textContent = data.results;
         } else {
-            console.log(response);
+            const errorData = await response.json();
+            document.getElementById("results").textContent = "Ошибка: " + errorData.detail[0].msg;
         }
     }
 
