@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 cd Alembic
 alembic upgrade head
 cd ..
-CMD ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
