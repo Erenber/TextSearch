@@ -4,7 +4,7 @@ from app.setup.DB_connection import session
 from app.models.models import Docs
 
 
-search_router = APIRouter(prefix="/search", tags=['Document surch'])
+search_router = APIRouter(prefix="/search", tags=['Document search'])
 
 
 @search_router.get("/all")
