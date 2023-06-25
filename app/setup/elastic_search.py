@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 
-from config import ES_HOST
+from config import ES_HOST, ES_PORT
 
 
 MAPPING = {
@@ -16,7 +16,7 @@ MAPPING = {
 
 
 def create_indexes():
-    elastic_client: Elasticsearch = Elasticsearch(f"http://{ES_HOST}:9200")
+    elastic_client: Elasticsearch = Elasticsearch(f"http://{ES_HOST}:{ES_PORT}")
     elastic_client.indices.create(index="documents", mappings=MAPPING)
 
 

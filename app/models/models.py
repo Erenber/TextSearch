@@ -26,6 +26,12 @@ class Docs(Base):
         self.rubrics = py_doc.rubrics
         self.doc_text = py_doc.doc_text
 
+    def es_insert(self):
+        return {
+                "id": self.id,
+                "text": self.doc_text
+                }
+
 
 metadata = Base.metadata
 

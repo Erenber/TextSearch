@@ -10,3 +10,4 @@ DB_USER = os.environ.get("DB_USER")
 DB_PASS = os.environ.get("DB_PASS")
 
 ES_HOST = os.environ.get("ES_HOST")
+ES_PORT = os.environ.get("ES_PORT")
