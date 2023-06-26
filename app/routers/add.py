@@ -18,4 +18,4 @@ async def add_document(py_doc: PyDoc):
     last_inserted_id = doc.id
     es.index(index=INDEX_NAME, body=doc.es_insert())
 
-    return {"results": f"Документ успешно добавлен! {last_inserted_id}"}
+    return {"results": f"Документ №{last_inserted_id} успешно добавлен! "}

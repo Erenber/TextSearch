@@ -5,7 +5,7 @@ from config import ES_HOST, ES_PORT
 
 MAPPING = {
             "properties": {
-                "iD": {
+                "id": {
                     "type": "long",
                 },
                 "text": {
