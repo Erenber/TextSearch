@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.setup.DB_connection import session
+from app.setup.ES_connection import es, INDEX_NAME
 from app.models.models import Docs, PyDoc
 
 
@@ -11,5 +12,10 @@ add_router = APIRouter(prefix="/add", tags=['Document addition'])
 async def add_document(py_doc: PyDoc):
     doc = Docs(py_doc)
     session.add(doc)
+    session.flush()
     session.commit()
-    return {"results": f"Document added successfully!"}
+
+    last_inserted_id = doc.id
+    es.index(index=INDEX_NAME, body=doc.es_insert())
+
+    return {"results": f"Документ №{last_inserted_id} успешно добавлен! "}
