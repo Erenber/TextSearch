@@ -20,10 +20,11 @@ async def search_text(text: str):
     try:
         es_docs = es.search(index=INDEX_NAME, source={"includes": ["id"]},
                             query={
-                                "match":
-                                    {
-                                        "text": text
-                                    }
+                                "query_string": {
+                                    "query": f"*{text.lower()}*",
+                                    "fields": ["text"],
+                                    "default_operator": "AND"
+                                }
                             }
                             , size=1000)
         document_ids = [document["_source"]["id"] for document in es_docs.body["hits"]["hits"]]

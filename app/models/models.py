@@ -29,7 +29,7 @@ class Docs(Base):
     def es_insert(self):
         return {
                 "id": self.id,
-                "text": self.doc_text
+                "text": self.doc_text.lower()
                 }
 
 
