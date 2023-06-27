@@ -117,7 +117,7 @@
             document.getElementById("results").textContent = data.results;
         } else {
             const errorData = await response.json();
-            document.getElementById("results").textContent = "Ошибка: " + errorData.detail[0].msg;
+            document.getElementById("results").textContent = "Error: " + errorData.detail[0].msg;
         }
     }
 
@@ -157,7 +157,8 @@
                 });
             }
         } else {
-            console.log(response);
+            const errorData = await response.json();
+            document.getElementById("results").textContent = errorData.results;
         }
     }
 
@@ -186,7 +187,8 @@
             resultsElement.appendChild(countElement);
 
         } else {
-            console.log(response);
+            const errorData = await response.json();
+            document.getElementById("results").textContent = errorData.results;
         }
     }
 </script>

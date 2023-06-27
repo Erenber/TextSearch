@@ -9,10 +9,10 @@ if [ "$DATABASE" = "postgres" ]; then
 
     echo "PostgreSQL started"
 fi
+
 cd Alembic
 alembic upgrade head
 cd ..
-
 
 if [ "$ES_DATABASE" = "elasticsearch" ]; then
     echo "Waiting for Kibana..."

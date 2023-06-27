@@ -16,8 +16,11 @@ MAPPING = {
 
 
 def create_indexes():
-    elastic_client: Elasticsearch = Elasticsearch(f"http://{ES_HOST}:{ES_PORT}")
-    elastic_client.indices.create(index="documents", mappings=MAPPING)
+    try:
+        elastic_client: Elasticsearch = Elasticsearch(f"http://{ES_HOST}:{ES_PORT}")
+        elastic_client.indices.create(index="documents", mappings=MAPPING)
+    except Exception as ex:
+        print(f"Ошибка при подключении к базе данных: {str(ex)}")
 
 
 if __name__ == "__main__":
