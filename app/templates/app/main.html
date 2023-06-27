@@ -1,10 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>TEXT SEARCHER</title>
+    <meta charset="utf-8"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: -170px;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            margin-top: 20px;
+            justify-content: space-between;
+        }
+
+        .left-half {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .right-half {
+            flex: 1;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            overflow: auto;
+            width: 100%;
+            height: 450px;
+        }
+        textarea {
+            width: 100%;
+            padding: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-top: -20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .doc p {
+            margin-bottom:-20px;
+            /*border-bottom: 1px solid #ccc;*/
+            padding-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
+<h1>TEXT SEARCHER</h1>
+<div class="container">
+    <div class="left-half">
+        <p>
+            <label for="input_rubrics">Введите рубрику:</label><br/>
+            <textarea name="input_rubrics" id="input_rubrics" cols="40"></textarea>
+        </p>
+        <p>
+            <label for="input_text">Введите текст:</label><br/>
+            <textarea name="input_text" id="input_text" cols="40" rows="3"></textarea>
+        </p>
+        <button onclick="send()">Отправить</button>
+        <p>
+            <label for="input_search">Введите текст документа:</label><br/>
+            <textarea name="input_search" id="input_search" cols="40"></textarea>
+        </p>
+        <button onclick="search('Найти')">Найти</button>
+        <button onclick="search('Все документы')">Все документы</button>
+        <p>
+            <label for="input_delete">Введите id документа для удаления:</label><br/>
+            <textarea name="input_delete" id="input_delete" cols="40"></textarea>
+        </p>
+        <button onclick="del('Удалить')">Удалить по Id</button>
+        <button onclick="del('Удалить все документы')">Удалить все документы</button>
+    </div>
+    <div class="right-half">
+        <div id="results"></div>
+    </div>
+</div>
+<script>
+    async function send() {
+        const input_text = document.getElementById("input_text").value;
+        const input_rubrics = document.getElementById("input_rubrics").value;
 
+        const response = await fetch("/add", {
+            method: "POST",
+            headers: {"Accept": "application/json", "Content-Type": "application/json"},
+            body: JSON.stringify({
+                doc_text: input_text,
+                rubrics: input_rubrics
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById("results").textContent = data.results;
+        } else {
+            const errorData = await response.json();
+            document.getElementById("results").textContent = "Error: " + errorData.detail[0].msg;
+        }
+    }
+
+    async function search(name) {
+        var url = "/search/all";
+
+        if (name === 'Найти') {
+            const input_text = document.getElementById("input_search").value;
+            url = `/search/${encodeURIComponent(input_text)}`;
+        }
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {"Accept": "application/json"}
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const resultsElement = document.getElementById("results");
+
+            resultsElement.innerHTML = "";
+
+            if (data.length === 0) {
+                const noDataElement = document.createElement("p");
+                noDataElement.textContent = "Документы отсутствуют";
+                resultsElement.appendChild(noDataElement);
+            } else {
+                data.forEach((doc) => {
+                    const docElement = document.createElement("div");
+                    docElement.classList.add("doc");
+                    docElement.innerHTML =
+                    `<p>ID: ${doc.id}</p>
+                    <p>Rubrics: ${doc.rubrics}</p>
+                    <p>Doc Text: ${doc.doc_text}</p>
+                    <p>Created Date: ${doc.created_date}</p><br>`;
+                    resultsElement.appendChild(docElement);
+                });
+            }
+        } else {
+            const errorData = await response.json();
+            document.getElementById("results").textContent = errorData.results;
+        }
+    }
+
+    async function del(name) {
+        var url = "/delete/";
+        var input_id = -1
+        if (name === 'Удалить') {
+            input_id = document.getElementById("input_delete").value;
+        }
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {"Accept": "application/json", "Content-Type": "application/json"},
+            body: JSON.stringify({
+                id: input_id
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const resultsElement = document.getElementById("results");
+
+            resultsElement.innerHTML = "";
+
+            const countElement = document.createElement("p");
+            countElement.textContent = `Количество удаленных записей: ${data}`;
+            resultsElement.appendChild(countElement);
+
+        } else {
+            const errorData = await response.json();
+            document.getElementById("results").textContent = errorData.results;
+        }
+    }
+</script>
 </body>
 </html>
