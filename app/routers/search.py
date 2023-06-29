@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from starlette.responses import JSONResponse
 
 from app.setup.DB_connection import session
 from app.setup.ES_connection import es, INDEX_NAME
@@ -37,4 +38,7 @@ async def search_text(text: str):
         return [doc for doc in result]
 
     except Exception as ex:
-        return {"results": str(ex)}
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(ex)},
+        )
