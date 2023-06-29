@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from starlette.responses import JSONResponse
 
 from app.setup.DB_connection import session
 from app.setup.ES_connection import es, INDEX_NAME
@@ -20,10 +21,11 @@ async def search_text(text: str):
     try:
         es_docs = es.search(index=INDEX_NAME, source={"includes": ["id"]},
                             query={
-                                "match":
-                                    {
-                                        "text": text
-                                    }
+                                "query_string": {
+                                    "query": f"*{text.lower()}*",
+                                    "fields": ["text"],
+                                    "default_operator": "AND"
+                                }
                             }
                             , size=1000)
         document_ids = [document["_source"]["id"] for document in es_docs.body["hits"]["hits"]]
@@ -36,4 +38,7 @@ async def search_text(text: str):
         return [doc for doc in result]
 
     except Exception as ex:
-        return {"results": str(ex)}
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(ex)},
+        )

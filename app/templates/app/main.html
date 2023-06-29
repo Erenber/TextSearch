@@ -117,7 +117,8 @@
             document.getElementById("results").textContent = data.results;
         } else {
             const errorData = await response.json();
-            document.getElementById("results").textContent = "Error: " + errorData.detail[0].msg;
+            const errorCode = response.status;
+            document.getElementById("results").textContent = `Error ${errorCode}: ${errorData.error}`;
         }
     }
 
@@ -158,7 +159,8 @@
             }
         } else {
             const errorData = await response.json();
-            document.getElementById("results").textContent = errorData.results;
+            const errorCode = response.status;
+            document.getElementById("results").textContent = `Error ${errorCode}: ${errorData.error}`;
         }
     }
 
@@ -188,7 +190,8 @@
 
         } else {
             const errorData = await response.json();
-            document.getElementById("results").textContent = errorData.results;
+            const errorCode = response.status;
+            document.getElementById("results").textContent = `Error ${errorCode}: ${errorData.error}`;
         }
     }
 </script>

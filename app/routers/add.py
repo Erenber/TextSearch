@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from starlette.responses import JSONResponse
 
 from app.setup.DB_connection import session
 from app.setup.ES_connection import es, INDEX_NAME
@@ -21,4 +22,7 @@ async def add_document(py_doc: PyDoc):
         return {"results": f"Документ №{last_inserted_id} успешно добавлен!"}
 
     except Exception as ex:
-        return {"results": str(ex)}
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(ex)},
+        )
